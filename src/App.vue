@@ -1,9 +1,9 @@
 <template>
   <input class="searchBar" type="text" v-model="city" placeholder="City" />
   <h1>{{ city }}</h1>
-  <CurrentWeather :city=city />
+  <CurrentWeather :city=city @inputChange="checkData" />
   
-</template>
+</template> 
 
 <script>
 import CurrentWeather from './components/CurrentWeather.vue';
