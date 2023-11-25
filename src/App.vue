@@ -1,15 +1,25 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <input class="searchBar" type="text" v-model="city" placeholder="City" />
+  <h1>{{ city }}</h1>
+  <CurrentWeather :city=city />
+  
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import CurrentWeather from './components/CurrentWeather.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    CurrentWeather
+  },
+  data() {
+    return {
+      city: "West Haven",
+    }
+  },
+  methods: {
+
   }
 }
 </script>
@@ -22,5 +32,13 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.searchBar{
+  width: 25rem;
+    height: 35px;
+    font-size: 25px;
+    border-radius: 15px;
+    padding: 8px;
 }
 </style>
