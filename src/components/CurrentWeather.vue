@@ -71,7 +71,6 @@ export default {
 
 <style scoped>
     .container{
-        /* background: var(--secondary-color); */
         padding: 20px;
         height: 400px;
         display: flex;

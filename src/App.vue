@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-        <nav class="glass"> <h3>WeatherNow</h3> </nav>
+        <nav class="glass"> 
+          <img src="icon.png" class="icon" alt="icon">
+          <h3>WeatherNow</h3> 
+        </nav>
 
         <div id="sidebar" class="glass"> 
           <h3>Enter the name of the city</h3>
@@ -11,9 +14,9 @@
           <CurrentWeather :city=city :data=weathers /> 
         </main>
     
-        <div id="content1">Content 1</div>
-        <div id="content2">Content 2</div>
-        <div id="content3">Content 3</div>
+        <div id="content1">
+          <SevenDayForecast />
+        </div>
     
         <footer> Footer </footer>
     </div>
@@ -23,11 +26,13 @@
 
 <script>
 import CurrentWeather from './components/CurrentWeather.vue';
+import SevenDayForecast from './components/SevenDayForecast.vue';
 
 export default {
   name: 'App',
   components: {
-    CurrentWeather
+    CurrentWeather,
+    SevenDayForecast
   },
   data() {
     return {
@@ -50,14 +55,10 @@ export default {
         throw error;
       }
     },
-
-    justPrint() {
-      console.log("asdahjsd")
-    },
   },
   async created(){
         this.weathers = await this.fetchCurrentWeather()
-        this.justPrint()
+        this.city = "West Haven"
   }
 }
 </script>
@@ -85,14 +86,21 @@ body{
     grid-template-areas: 
     "nav nav nav nav"
     "sidebar main main main"
-    "sidebar content1 content2 content3"
+    "sidebar content1 content1 content1"
     "sidebar footer footer footer"
     ;
 }
 
 nav{
     grid-area: nav;
+    display: flex;
     padding: 20px;
+}
+
+.icon{
+  height: 25px;
+  width: 25px;
+  margin-right: 10px;
 }
 
 nav h3{
@@ -113,14 +121,6 @@ main{
 
 #content1{
     grid-area: content1;
-}
-
-#content2{
-    grid-area: content2;
-}
-
-#content3{
-    grid-area: content3;
 }
 
 footer{
