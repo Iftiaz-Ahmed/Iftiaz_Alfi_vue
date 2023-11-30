@@ -1,11 +1,26 @@
 <template>
-    <p>{{ data }}</p>
-    <div class="container">
-        <p>Current Weather</p>
-        <h4>{{ city }}</h4>
-        <img class="weatherIcon" :src=imgUrl alt="">
-        <p>{{ weatherDesc }}</p>
-        <p class="temp">{{ temp }}°</p>
+    <div class="container glass">
+        <div v-if="weather != null" class="desc">
+            <p>Current Weather</p>
+            <h4>{{ city }}</h4>
+            <p class="temp">{{ temp }}°</p>
+            <p>Feels Like {{ kelvinToCelsius(weather['main']['feels_like']) }}°</p>
+            <p>
+                Max Temp {{ kelvinToCelsius(weather['main']['temp_max']) }}°
+                  -  
+                Min Temp {{ kelvinToCelsius(weather['main']['temp_min']) }}°
+            </p>
+            <p>Humidity {{ weather['main']['humidity'] }}%</p>
+            <p>Pressure {{ weather['main']['pressure'] }} hPa</p>
+            <p>Wind {{ weather['wind']['speed'] }} m/s</p>
+        </div>
+        <div v-if="weather != null" class="image">
+            <img class="weatherIcon" :src=imgUrl alt="">
+            <p>{{ weatherDesc }}</p>
+        </div>
+        <div v-else class="message">
+            <h3>Weather Data not available</h3>
+        </div>
     </div>
 </template>
 
@@ -14,41 +29,41 @@
 export default {
     name: 'CurrentWeather',
     props: {
-        city: String
+        city: String,
+        data: Array,
     },
     data(){
         return {
-            data: [],
+            weather: null, 
             temp: 0.0,
             weatherDesc: '',
             imgUrl: '',
         }
     },
     methods: {
-        async fetchCurrentWeather() {
-            try {
-                const res = await fetch("https://iftiaz-alfi-node.onrender.com/api");
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
+        filterData() {
+            for (const item of this.data) {
+                console.log("checking.. "+this.city)
+                if (item['name'].toLowerCase() == this.city.toLowerCase()) {
+                    this.weather = item
                 }
-                const data = await res.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                throw error; 
+            }
+            if (this.weather != null) {
+                this.temp = this.kelvinToCelsius(this.weather['main']['temp'])
+                this.weatherDesc = this.weather['weather'][0]['description'].toUpperCase()
+                this.imgUrl = "https://openweathermap.org/img/wn/" + this.weather['weather'][0]['icon'] + '@2x.png'
             }
         },
         kelvinToCelsius(temp) {
-            return (temp - 273.15).toPrecision(1)
+            return (temp - 273.15).toFixed(0)
         }
         
     },
+    watch: {
+        city: 'filterData',
+    },
     async created(){
-        this.data = await this.fetchCurrentWeather();
-        this.temp = this.kelvinToCelsius(this.data['main']['temp'])
-        this.weatherDesc = this.data['weather'][0]['description'].toUpperCase()
-        this.imgUrl = "http://openweathermap.org/img/w/" + this.data['weather'][0]['icon'] + '.png'
-       
+        this.filterData()   
     }
 }
 
@@ -56,14 +71,22 @@ export default {
 
 <style scoped>
     .container{
-        width: 80rem;
+        /* background: var(--secondary-color); */
+        padding: 20px;
         height: 400px;
-        background: #b6edff;
-        margin-left: auto;
-        margin-right: auto;
-        border-radius: 15px;
-        padding: 15px;
-        text-align: left;
+        display: flex;
+        justify-content: space-between; 
+    }
+
+    .desc{
+        flex: 2;
+    }
+
+    .image{
+        flex: 1;
+        text-align: center;
+        margin-top: 50px;
+        
     }
 
     .container p{
@@ -75,7 +98,15 @@ export default {
     }
 
     .weatherIcon{
-        width: 100px;
-        height: 100px;
+        width: 130px;
+        height: 130px;
+    }
+
+    .message{
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
     }
 </style>
