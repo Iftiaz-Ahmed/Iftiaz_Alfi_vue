@@ -7,7 +7,12 @@
 
         <div id="sidebar" class="glass"> 
           <h3>Enter the name of the city</h3>
-          <input class="searchBar" type="text" v-model="city" placeholder="City" /> 
+          <input class="searchBar" type="text" v-model="city" placeholder="City" />
+          <small>E.g: West Haven, New York, San Francisco</small>
+          
+          <div class="bottom">
+            <p>© All rights reserved by Iftiaz Ahmed Alfi</p>
+          </div>
         </div>
     
         <main> 
@@ -15,10 +20,8 @@
         </main>
     
         <div id="content1">
-          <SevenDayForecast />
+          <ThreeHourForecast :city=city :data=threeHourForecasts />
         </div>
-    
-        <footer> Footer </footer>
     </div>
   
   
@@ -26,30 +29,45 @@
 
 <script>
 import CurrentWeather from './components/CurrentWeather.vue';
-import SevenDayForecast from './components/SevenDayForecast.vue';
+import ThreeHourForecast from './components/ThreeHourForecast.vue';
 
 export default {
   name: 'App',
   components: {
     CurrentWeather,
-    SevenDayForecast
+    ThreeHourForecast
   },
   data() {
     return {
       city: "",
       weathers: [],
+      threeHourForecasts: []
     }
   },
   methods: {
     async fetchCurrentWeather() {
       try {
-        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api"); 
+        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api/currentWeather"); 
         if (!res.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await res.json();
         console.log("API Response:", data); // Add this line
-        return data['weathers'];
+        return data;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+      }
+    },
+    async fetchThreeHourForecast() {
+      try {
+        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api/threeHourForecast"); 
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await res.json();
+        console.log("API Response:", data); // Add this line
+        return data;
       } catch (error) {
         console.error('Error fetching data:', error);
         throw error;
@@ -58,36 +76,37 @@ export default {
   },
   async created(){
         this.weathers = await this.fetchCurrentWeather()
+        this.threeHourForecasts = await this.fetchThreeHourForecast()
         this.city = "West Haven"
   }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 :root{
-    --main-radius: 5px;
-    --main-padding: 5px;
     --primary-color: #191B1F;
     --secondary-color: #040720;
 }
 
 body{
-    font-family: 'Arvo', serif;
+    font-family: 'Roboto', sans-serif;
     background: var(--primary-color);
     color: white;
+    letter-spacing: 2px;
 }
 
 .container{
     display: grid;
     height: 100vh;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.3fr 1.5fr 1.2fr 1.0fr;
+    grid-template-columns: 0.5fr 2fr;
+    grid-template-rows: 0.2fr 1.5fr 1.3fr;
     gap: 0.5rem;
     grid-template-areas: 
-    "nav nav nav nav"
-    "sidebar main main main"
-    "sidebar content1 content1 content1"
-    "sidebar footer footer footer"
+    "nav nav"
+    "sidebar main"
+    "sidebar content1"
     ;
 }
 
@@ -123,17 +142,6 @@ main{
     grid-area: content1;
 }
 
-footer{
-    grid-area: footer;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: 2px;
-}
-
 .searchBar{
     width: 23rem;
     height: 35px;
@@ -142,11 +150,27 @@ footer{
     padding: 8px;
 }
 
+input{
+  text-align: center;
+}
+
 .glass{
     background: linear-gradient(135deg, #ffffff1a, #ffffff00);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     border:1px solid #ffffff2e;
     box-shadow: 0 8px 32px 0 #0000005e;
+}
+
+small{
+  font-size: 10px;
+}
+
+.bottom{
+  position: absolute;
+  bottom: 0;
+  left: 40px;
+  font-size: 15px;
+  
 }
 </style>

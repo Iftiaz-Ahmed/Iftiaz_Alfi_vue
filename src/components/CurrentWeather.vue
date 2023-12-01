@@ -12,7 +12,7 @@
             </p>
             <p>Humidity {{ weather['main']['humidity'] }}%</p>
             <p>Pressure {{ weather['main']['pressure'] }} hPa</p>
-            <p>Wind {{ weather['wind']['speed'] }} m/s</p>
+            <p>Wind gust of {{ weather['wind']['gust'] }} mps</p>
         </div>
         <div v-if="weather != null" class="image">
             <img class="weatherIcon" :src=imgUrl alt="">
@@ -42,10 +42,13 @@ export default {
     },
     methods: {
         filterData() {
-            for (const item of this.data) {
-                console.log("checking.. "+this.city)
+            for (const element of this.data) {
+                const item = element['value']
                 if (item['name'].toLowerCase() == this.city.toLowerCase()) {
                     this.weather = item
+                    break;
+                } else {
+                    this.weather = null
                 }
             }
             if (this.weather != null) {
