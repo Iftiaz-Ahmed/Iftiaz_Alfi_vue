@@ -37,7 +37,6 @@ export default {
     data(){
         return {
             weather: null, 
-            weatherDesc: '',
             imgUrl: '',
         }
     },
@@ -119,5 +118,11 @@ export default {
         flex-direction: column;
         justify-content: center;
         text-align: center;
+    }
+
+    @media only screen and (max-width: 1060px) {
+        .container{
+            padding: 30px;
+        }
     }
 </style>
