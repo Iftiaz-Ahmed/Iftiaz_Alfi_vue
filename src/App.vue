@@ -1,14 +1,17 @@
 <template>
   <div class="container">
         <nav class="glass"> 
-          <img src="icon.png" class="icon" alt="icon">
-          <h3>WeatherNow</h3> 
+          <div style="display: flex;">
+            <img src="icon.png" class="icon" alt="icon">
+            <h3>WeatherNow</h3> 
+          </div>
+          <button @click="toggleTemp" class="toggle">{{ isCelsius ? 'Celsius' : 'Fahrenheit' }}</button>
         </nav>
 
         <div id="sidebar" class="glass"> 
           <h3>Enter the name of the city</h3>
           <input class="searchBar" type="text" v-model="city" placeholder="City" />
-          <small>E.g: West Haven, New York, San Francisco</small>
+          <div><small>E.g: West Haven, New York, San Francisco</small></div>
           
           <div class="bottom">
             <p>© All rights reserved by Iftiaz Ahmed Alfi</p>
@@ -16,12 +19,16 @@
         </div>
     
         <main> 
-          <CurrentWeather :city=city :data=weathers /> 
+          <CurrentWeather :city=city :data=weathers :isCelsius=isCelsius /> 
         </main>
     
         <div id="content1">
-          <ThreeHourForecast :city=city :data=threeHourForecasts />
+          <ThreeHourForecast :city=city :data=threeHourForecasts :isCelsius=isCelsius />
         </div>
+
+        <footer class="glass">
+          <p>© All rights reserved by Iftiaz Ahmed Alfi</p>
+        </footer>
     </div>
   
   
@@ -41,7 +48,8 @@ export default {
     return {
       city: "",
       weathers: [],
-      threeHourForecasts: []
+      threeHourForecasts: [],
+      isCelsius: true
     }
   },
   methods: {
@@ -73,6 +81,9 @@ export default {
         throw error;
       }
     },
+    toggleTemp() {
+      this.isCelsius = !this.isCelsius
+    }
   },
   async created(){
         this.weathers = await this.fetchCurrentWeather()
@@ -114,6 +125,16 @@ nav{
     grid-area: nav;
     display: flex;
     padding: 20px;
+    justify-content: space-between;
+}
+
+.toggle{
+  padding: 5px 20px;
+  border: 2px solid #ffffff2e;
+  border-radius: 10px;
+  letter-spacing: 2px;
+  background: var(--primary-color);
+  color: white;
 }
 
 .icon{
@@ -142,6 +163,13 @@ main{
     grid-area: content1;
 }
 
+footer{
+  grid-area: footer;
+  display: none;
+  font-size: 14px;
+  text-align: center;
+}
+
 .searchBar{
     width: 23rem;
     height: 35px;
@@ -168,9 +196,40 @@ small{
 
 .bottom{
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   left: 40px;
   font-size: 15px;
   
 }
+
+@media only screen and (max-width: 1060px) {
+  .container{
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.3fr 0.7fr 1.5fr 1.3fr 0.2fr;
+    gap: 0.5rem;
+    grid-template-areas: 
+    "nav"
+    "sidebar"
+    "main"
+    "content1"
+    "footer"
+    ;
+  }
+
+  #sidebar{
+    padding-top: 1rem;
+  }
+
+  .bottom{
+    display: none;
+  }
+
+  footer{
+    display: block;
+  }
+
+}
+
 </style>

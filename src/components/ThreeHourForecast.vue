@@ -2,7 +2,7 @@
     <div class="forecast glass">
         <p>3 Hour Weather Forecast</p>
         <div v-if="forecastList.length != 0" class="parentBox">
-            <SingleForecast :data=x v-for="x in forecastList" :key="x"/>
+            <SingleForecast :data=x v-for="x in forecastList" :key="x" :isCelsius=isCelsius />
         </div>
         <div v-else class="message">
             <h3>Data not available</h3>
@@ -22,6 +22,7 @@ export default{
     props: {
         city: String,
         data: Array,
+        isCelsius: Boolean
     },
     data(){
         return {
@@ -59,7 +60,7 @@ export default{
     .parentBox{
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: center;
     }
     .message{
         height: 200px;

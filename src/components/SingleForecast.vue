@@ -2,7 +2,7 @@
     <div class="box">
         <img :src=generateImgUrl() alt="icon">
         <p class="title">{{ data['weather'][0]['description'].toUpperCase() }}</p>
-        <h1 class="temp">{{ kelvinToCelsius(data['main']['temp']) }}°</h1>
+        <h1 class="temp">{{ formatTemp(data['main']['temp']) }}°</h1>
         <p style="font-size: 14px;">Wind gust of {{ data['wind']['gust'] }} mps</p>
         <p>{{formatDateString(data['dt_txt'])}}</p>
     </div>
@@ -14,6 +14,7 @@ export default{
     name: 'SingleForecast',
     props: {
         data: Object,
+        isCelsius: Boolean
     },
     data(){
         return {
@@ -23,11 +24,8 @@ export default{
     methods: {
         formatDateString(inputString) {
             const inputDate = new Date(inputString);
-
-            const options = { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
-
+            const options = { hour: 'numeric', minute: 'numeric', hour12: true };
             const formattedDate = inputDate.toLocaleString('en-US', options);
-
             return formattedDate;
         },
         generateImgUrl() {
@@ -37,8 +35,11 @@ export default{
                 return imgUrl
             }
         },
-        kelvinToCelsius(temp) {
-            return (temp - 273.15).toFixed(0)
+        formatTemp(temp) {
+            if (this.isCelsius)
+                return (temp - 273.15).toFixed(0)
+            else
+                return (((temp - 273.15) * (9/5)) + 32).toFixed(0)
         }
     },
     watch: {
@@ -49,7 +50,7 @@ export default{
 </script>
 
 <style scoped>
-    .box{
+    .box {
         flex: 1;
         background: var(--primary-color);
         margin: 5px;
@@ -57,7 +58,9 @@ export default{
         text-align: center;
         letter-spacing: 0px;
         font-size: 15px;
-        width: 500px;
+        width: 130px;
+        flex-basis: 110px;
+        max-width: 130px;
     }
 
     .title{

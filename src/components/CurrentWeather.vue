@@ -3,20 +3,21 @@
         <div v-if="weather != null" class="desc">
             <p>Current Weather</p>
             <h4>{{ city }}</h4>
-            <p class="temp">{{ temp }}°</p>
-            <p>Feels Like {{ kelvinToCelsius(weather['main']['feels_like']) }}°</p>
+            <p class="temp">{{ formatTemp(this.weather['main']['temp']) }}°</p>
+            <p>Feels Like: {{ formatTemp(weather['main']['feels_like']) }}°</p>
             <p>
-                Max Temp {{ kelvinToCelsius(weather['main']['temp_max']) }}°
+                Max Temp: {{ formatTemp(weather['main']['temp_max']) }}°
                   -  
-                Min Temp {{ kelvinToCelsius(weather['main']['temp_min']) }}°
+                Min Temp: {{ formatTemp(weather['main']['temp_min']) }}°
             </p>
-            <p>Humidity {{ weather['main']['humidity'] }}%</p>
-            <p>Pressure {{ weather['main']['pressure'] }} hPa</p>
-            <p>Wind gust of {{ weather['wind']['gust'] }} mps</p>
+            <p>Humidity: {{ weather['main']['humidity'] }}%</p>
+            <p>Pressure: {{ weather['main']['pressure'] }} hPa</p>
+            <p>Wind speed: {{ weather['wind']['speed'] }} mps</p>
         </div>
         <div v-if="weather != null" class="image">
+            <p>{{ formatTime(weather['dt']) }}</p>
             <img class="weatherIcon" :src=imgUrl alt="">
-            <p>{{ weatherDesc }}</p>
+            <p>{{ weather['weather'][0]['description'].toUpperCase() }}</p>
         </div>
         <div v-else class="message">
             <h3>Weather Data not available</h3>
@@ -31,11 +32,11 @@ export default {
     props: {
         city: String,
         data: Array,
+        isCelsius: Boolean
     },
     data(){
         return {
             weather: null, 
-            temp: 0.0,
             weatherDesc: '',
             imgUrl: '',
         }
@@ -52,15 +53,23 @@ export default {
                 }
             }
             if (this.weather != null) {
-                this.temp = this.kelvinToCelsius(this.weather['main']['temp'])
-                this.weatherDesc = this.weather['weather'][0]['description'].toUpperCase()
                 this.imgUrl = "https://openweathermap.org/img/wn/" + this.weather['weather'][0]['icon'] + '@2x.png'
             }
         },
-        kelvinToCelsius(temp) {
-            return (temp - 273.15).toFixed(0)
+        formatTemp(temp) {
+            if (this.isCelsius)
+                return (temp - 273.15).toFixed(0)
+            else
+                return (((temp - 273.15) * (9/5)) + 32).toFixed(0)
+        },
+        formatTime(unixTime) {
+            const timestamp = unixTime;
+            const date = new Date(timestamp * 1000);
+
+            const options = { month: 'short', day: 'numeric' };
+            const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+            return formattedDate
         }
-        
     },
     watch: {
         city: 'filterData',
@@ -87,7 +96,7 @@ export default {
     .image{
         flex: 1;
         text-align: center;
-        margin-top: 50px;
+        margin-top: 45px;
         
     }
 
