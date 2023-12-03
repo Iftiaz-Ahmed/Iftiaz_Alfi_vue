@@ -21,6 +21,7 @@
         </div>
         <div v-else class="message">
             <h3>Weather Data not available</h3>
+            <h5>Or, Data loading...</h5>
         </div>
     </div>
 </template>

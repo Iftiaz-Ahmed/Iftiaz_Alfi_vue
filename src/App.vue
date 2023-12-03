@@ -53,28 +53,13 @@ export default {
     }
   },
   methods: {
-    async fetchCurrentWeather() {
+    async fetchWeatherData() {
       try {
-        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api/currentWeather"); 
+        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api"); 
         if (!res.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await res.json();
-        console.log("API Response:", data); // Add this line
-        return data;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-      }
-    },
-    async fetchThreeHourForecast() {
-      try {
-        const res = await fetch("https://iftiaz-alfi-node.onrender.com/api/threeHourForecast"); 
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await res.json();
-        console.log("API Response:", data); // Add this line
         return data;
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -86,9 +71,10 @@ export default {
     }
   },
   async created(){
-        this.weathers = await this.fetchCurrentWeather()
-        this.threeHourForecasts = await this.fetchThreeHourForecast()
-        this.city = "West Haven"
+    const data = await this.fetchWeatherData();
+    this.weathers = data['currentWeather'];
+    this.threeHourForecasts = data['threeHourForecast'];
+    this.city = "West Haven";    
   }
 }
 </script>
