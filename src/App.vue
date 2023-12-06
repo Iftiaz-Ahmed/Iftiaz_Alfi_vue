@@ -2,7 +2,7 @@
   <div class="container">
         <nav class="glass"> 
           <div style="display: flex;">
-            <img src="icon.png" class="icon" alt="icon">
+            <img src="wicon.png" class="icon" alt="icon">
             <h3>WeatherNow</h3> 
           </div>
           <button @click="toggleTemp" class="toggle">{{ isCelsius ? 'Celsius' : 'Fahrenheit' }}</button>
@@ -154,6 +154,7 @@ footer{
   display: none;
   font-size: 14px;
   text-align: center;
+  margin-bottom: 10px;
 }
 
 .searchBar{
